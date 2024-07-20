@@ -1,5 +1,9 @@
 name: Lint & Test PR
-on: [ pull_request ]
+on:
+  pull_request:
+    branches: [ "main" ]
+  merge_group:
+    types: [checks_requested]
 jobs: 
   build:
     strategy:
