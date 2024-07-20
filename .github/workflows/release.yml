@@ -58,7 +58,7 @@ jobs:
 
       - name: Create Pull Request
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.SCOPED_USER_TOKEN }}
         run: |
           gh auth setup-git
           gh pr create \
