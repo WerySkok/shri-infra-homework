@@ -1,0 +1,102 @@
+name: Release new version
+on: [ workflow_dispatch ]
+jobs: 
+  checks:
+    strategy:
+      matrix:
+        command: [lint, test]  
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+      - run: npm ci
+      - run: npm run build
+      - run: npm run ${{ matrix.command }}
+  
+  release:
+    needs: checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create release branch
+        run: |
+          git checkout -b releases/${{ github.run_number }}
+
+      - name: Get last tag
+        id: last_tag 
+        run: echo "last_tag=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || git rev-list --max-parents=0 HEAD)" >> "$GITHUB_OUTPUT" # first commit if no last tag
+
+      - name: Get commit list
+        id: commitlist
+        run: echo "commitlist=$(git log --pretty=format:'%h - %s' --no-merges ${{ steps.last_tag.outputs.last_tag }}..HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Update changelog
+        run: |
+          echo "## Релиз №${{ github.run_number }}" >> temp.md
+          echo "Дата: $(date)" >> temp.md
+          echo "Релизер: ${{ github.actor }}" >> temp.md
+          echo "Коммиты:" >> temp.md
+          echo "${{ steps.commitlist.outputs.commitlist }}" >> temp.md
+          echo "Docker Image: cr.yandex/${{ secrets.YANDEX_REGISTRY_ID }}/app:${{ github.run_number }}" >> temp.md
+          cat CHANGELOG.md >> temp.md
+          mv temp.md CHANGELOG.md
+          git add CHANGELOG.md
+          git commit -m "doc(CHANGELOG): update changelog for release ${{ github.run_number }}"
+
+      - name: Publish release branch
+        run: git push --set-upstream origin releases/${{ github.run_number }}
+
+      - name: Create Pull Request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh auth setup-git
+          gh pr create \
+            --title "doc(CHANGELOG): update changelog for release ${{ github.run_number }}" \
+            --body "This PR updates the CHANGELOG.md file for release ${{ github.run_number }}." \
+            --base main \
+            --head releases/${{ github.run_number }}
+
+      - name: Merge Pull Request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_number=$(gh pr list --base main --head releases/${{ github.run_number }} --json number --jq '.[0].number')
+          gh pr merge $pr_number --merge --delete-branch=false
+
+      - name: Tag release
+        run: |
+          git tag v${{ github.run_number }}
+          git push origin v${{ github.run_number }}
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Релиз ${{ github.run_number }}
+          draft: false
+          prerelease: false
+
+      - name: Build Docker image
+        run: |
+          docker build -t cr.yandex/${{ secrets.YANDEX_REGISTRY_ID }}/app:${{ github.run_number }} .
+          docker tag cr.yandex/${{ secrets.YANDEX_REGISTRY_ID }}/app:${{ github.run_number }} cr.yandex/${{ secrets.YANDEX_REGISTRY_ID }}/app:${{ github.run_number }}_latest
+      
+      - name: Login to Yandex Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: cr.yandex
+          username: oauth
+          password: ${{ secrets.YANDEX_REGISTRY_OAUTH_TOKEN }}
+      
+      - name: Push Docker image
+        run: |
+          docker push cr.yandex/${{ secrets.YANDEX_REGISTRY_ID }}/app:${{ github.run_number }}
+          docker push cr.yandex/${{ secrets.YANDEX_REGISTRY_ID }}/app:${{ github.run_number }}_latest
+      
