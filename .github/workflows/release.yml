@@ -48,7 +48,9 @@ jobs:
             echo EOF
           } >> "$GITHUB_OUTPUT"
 
-      - name: Update changelog
+      - name: Update changelog and create issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "## Релиз №${{ github.run_number }}" >> temp.md
           echo -e "Дата: $(date)\n" >> temp.md
@@ -56,6 +58,7 @@ jobs:
           echo -e "Коммиты:\n" >> temp.md
           echo -e "${{ steps.commitlist.outputs.commitlist }}\n" >> temp.md
           echo "Docker Image: cr.yandex/${{ secrets.YANDEX_REGISTRY_ID }}/app:${{ github.run_number }}" >> temp.md
+          gh issue create --title "Релиз №${{ github.run_number }}" --body "$(cat temp.md)"
           echo "" >> temp.md
           cat CHANGELOG.md >> temp.md
           mv temp.md CHANGELOG.md
