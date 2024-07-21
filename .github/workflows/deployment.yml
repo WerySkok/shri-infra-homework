@@ -23,6 +23,6 @@ jobs:
             docker pull cr.yandex/${{ secrets.YANDEX_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}_latest
             docker stop app
             docker rm app
-            docker run --detach --restart=always --expose 3000:3000 --name app cr.yandex/${{ secrets.YANDEX_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}_latest
+            docker run --detach --restart=always --expose 3000 --name app cr.yandex/${{ secrets.YANDEX_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}_latest
           EOF
           rm deploykey
