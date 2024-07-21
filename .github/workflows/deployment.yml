@@ -1,0 +1,26 @@
+name: Deploy app
+on: 
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: "Version of the existing release branch"
+        required: true
+
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    environment: yandex-cloud-test-stand
+    steps: 
+      - env:
+          RELEASE_VERSION: ${{ github.event.inputs.release_version }}
+          SSH_PRIVATE_KEY: ${{ secrets.SERV ICE_USER_SSH_KEY }}
+          SERVER: ${{ secrets.SERVER }}
+          USERNAME: ${{ secrets.USERNAME }}
+        run: |
+          echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+          ssh -o StrictHostKeyChecking=no $USERNAME@$SERVER << 'EOF'
+            docker pull cr.yandex/${{ secrets.YANDEX_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}_latest
+            docker stop app
+            docker rm app
+            docker run --detach --restart=always --expose 3000:3000 --name app cr.yandex/${{ secrets.YANDEX_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}_latest
+          EOF
