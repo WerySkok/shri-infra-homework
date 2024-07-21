@@ -22,6 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           fetch-tags: true
 
       - name: Create release branch
@@ -52,9 +53,10 @@ jobs:
           echo "## Релиз №${{ github.run_number }}" >> temp.md
           echo -e "Дата: $(date)\n" >> temp.md
           echo -e "Релизер: ${{ github.actor }}\n" >> temp.md
-          echo -e "Коммиты:\n >> temp.md
+          echo -e "Коммиты:\n" >> temp.md
           echo -e "${{ steps.commitlist.outputs.commitlist }}\n" >> temp.md
-          echo -e "Docker Image: cr.yandex/${{ secrets.YANDEX_REGISTRY_ID }}/app:${{ github.run_number }}\n" >> temp.md
+          echo "Docker Image: cr.yandex/${{ secrets.YANDEX_REGISTRY_ID }}/app:${{ github.run_number }}" >> temp.md
+          echo "" >> temp.md
           cat CHANGELOG.md >> temp.md
           mv temp.md CHANGELOG.md
           git add CHANGELOG.md
