@@ -1,3 +1,14 @@
+## Релиз №11
+Дата: Sun Jul 21 11:34:27 UTC 2024
+
+Релизер: WerySkok
+
+Коммиты:
+
+* 4ef12de - ci(release_fix.yml): add workflow for fix releases (#20)
+
+Docker Image: cr.yandex/crpc60jjnbs1bj67fr3b/app:11
+
 ## Релиз №10
 Дата: Sun Jul 21 00:47:43 UTC 2024
 
