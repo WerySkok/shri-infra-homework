@@ -57,7 +57,7 @@ jobs:
               # Извлечение числа из тега и увеличение его на 1
               fix_number=${BASH_REMATCH[1]}
               next_fix_number=$((fix_number + 1))
-              echo "fix_number=$($next_fix_number)"
+              echo "fix_number=${next_fix_number}"
             else
               # Если тег не содержит _fix, вывести 1
               echo "fix_number=1"
