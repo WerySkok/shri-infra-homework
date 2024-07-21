@@ -1,3 +1,20 @@
+## Релиз №12
+Дата: Sun Jul 21 12:16:23 UTC 2024
+
+Релизер: WerySkok
+
+Коммиты:
+
+* af442e9 - ci(release_fix.yml): fix bash script (#26)
+
+* 77348c5 - ci(release_fix.yml): improve last tag fetching (#25)
+
+* b0b0150 - ci(release_fix.yml): improve gh issue number search (#24)
+
+* 345532c - ci(fix_release.yml): add RELEASE_VERSION env to checks step (#23)
+
+Docker Image: cr.yandex/crpc60jjnbs1bj67fr3b/app:12
+
 ## Релиз №11
 Дата: Sun Jul 21 11:34:27 UTC 2024
 
