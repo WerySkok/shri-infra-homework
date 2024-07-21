@@ -35,5 +35,5 @@ jobs:
         run: |
           echo -e "Релиз развёрнут на сервере.\n" >> temp.md
           echo "Задеплоил: ${{ github.actor }}" >> temp.md
-          gh issue comment $(gh issue list --search "Релиз №${{ env.RELEASE_VERSION }} in:title author:app/github-actions" --json number --jq ".[0].number") --body "$(cat temp.md)"
+          gh issue comment $(gh issue list --repo ${{ github.repository }} --search "Релиз №${{ env.RELEASE_VERSION }} in:title author:app/github-actions" --json number --jq ".[0].number") --repo ${{ github.repository }} --body "$(cat temp.md)"
           rm temp.md
