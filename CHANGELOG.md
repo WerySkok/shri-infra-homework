@@ -1,3 +1,14 @@
+## Релиз №10
+Дата: Sun Jul 21 00:47:43 UTC 2024
+
+Релизер: WerySkok
+
+Коммиты:
+
+* 483ec57 - ci(release.yml): create issue for release (#17)
+
+Docker Image: cr.yandex/crpc60jjnbs1bj67fr3b/app:10
+
 ## Релиз №9
 Дата: Sun Jul 21 00:33:58 UTC 2024
 
