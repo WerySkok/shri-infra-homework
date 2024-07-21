@@ -12,6 +12,8 @@ jobs:
       matrix:
         command: [lint, test]  
     runs-on: ubuntu-latest
+    env:
+      RELEASE_VERSION: ${{ github.event.inputs.release_version }}
     steps:
       - uses: actions/checkout@v4
         with:
