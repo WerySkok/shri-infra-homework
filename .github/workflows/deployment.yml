@@ -18,6 +18,7 @@ jobs:
           USERNAME: ${{ secrets.USERNAME }}
         run: |
           echo "$SSH_PRIVATE_KEY" > deploykey
+          chmod 600 deploykey
           ssh -o StrictHostKeyChecking=no $USERNAME@$SERVER -i deploykey << 'EOF'
             docker pull cr.yandex/${{ secrets.YANDEX_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}_latest
             docker stop app
