@@ -13,7 +13,7 @@ jobs:
     steps: 
       - env:
           RELEASE_VERSION: ${{ github.event.inputs.release_version }}
-          SSH_PRIVATE_KEY: ${{ secrets.SERV ICE_USER_SSH_KEY }}
+          SSH_PRIVATE_KEY: ${{ secrets.SERVICE_USER_SSH_KEY }}
           SERVER: ${{ secrets.SERVER }}
           USERNAME: ${{ secrets.USERNAME }}
         run: |
