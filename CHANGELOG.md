@@ -1,3 +1,14 @@
+## Релиз №11_fix
+Дата: Sun Jul 21 12:05:24 UTC 2024
+
+Релизер: WerySkok
+
+Коммиты:
+
+
+
+Docker Image: cr.yandex/crpc60jjnbs1bj67fr3b/app:11_fix
+
 ## Релиз №11_fix1
 Дата: Sun Jul 21 11:54:08 UTC 2024
 
