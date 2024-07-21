@@ -11,7 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: yandex-cloud-test-stand
     steps: 
-      - env:
+      - name: Login via ssh and tell docker to pull new image
+        env:
           RELEASE_VERSION: ${{ github.event.inputs.release_version }}
           SSH_PRIVATE_KEY: ${{ secrets.SERVICE_USER_SSH_KEY }}
           SERVER: ${{ secrets.SERVER }}
@@ -26,3 +27,13 @@ jobs:
             docker run --detach --restart=always -p 3000:3000 --name app cr.yandex/${{ secrets.YANDEX_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}_latest
           EOF
           rm deploykey
+      
+      - name: Leave a comment on release ticket
+        env:
+          RELEASE_VERSION: ${{ github.event.inputs.release_version }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo -e "Релиз развёрнут на сервере.\n" >> temp.md
+          echo "Задеплоил: ${{ github.actor }}" >> temp.md
+          gh issue comment $(gh issue list --search "Релиз №${{ env.RELEASE_VERSION }} in:title author:app/github-actions" --json number --jq ".[0].number") --body "$(cat temp.md)"
+          rm temp.md
