@@ -38,16 +38,16 @@ jobs:
 
       - name: Get commit list
         id: commitlist
-        run: echo "commitlist=$(git log --pretty=format:'%h - %s' --no-merges ${{ steps.last_tag.outputs.last_tag }}..HEAD)" >> "$GITHUB_OUTPUT"
+        run: echo "commitlist<<EOF$(git log --pretty=format:'* %h - %s%n' --no-merges ${{ steps.last_tag.outputs.last_tag }}..HEAD)EOF" >> "$GITHUB_OUTPUT"
 
       - name: Update changelog
         run: |
           echo "## Релиз №${{ github.run_number }}" >> temp.md
-          echo "Дата: $(date)" >> temp.md
-          echo "Релизер: ${{ github.actor }}" >> temp.md
-          echo "Коммиты:" >> temp.md
-          echo "${{ steps.commitlist.outputs.commitlist }}" >> temp.md
-          echo "Docker Image: cr.yandex/${{ secrets.YANDEX_REGISTRY_ID }}/app:${{ github.run_number }}" >> temp.md
+          echo -e "Дата: $(date)\n" >> temp.md
+          echo -e "Релизер: ${{ github.actor }}\n" >> temp.md
+          echo -e "Коммиты:\n >> temp.md
+          echo -e "${{ steps.commitlist.outputs.commitlist }}\n" >> temp.md
+          echo -e "Docker Image: cr.yandex/${{ secrets.YANDEX_REGISTRY_ID }}/app:${{ github.run_number }}\n" >> temp.md
           cat CHANGELOG.md >> temp.md
           mv temp.md CHANGELOG.md
           git add CHANGELOG.md
