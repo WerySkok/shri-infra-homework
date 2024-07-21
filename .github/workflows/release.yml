@@ -21,6 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-tags: true
 
       - name: Create release branch
         run: |
@@ -38,7 +40,12 @@ jobs:
 
       - name: Get commit list
         id: commitlist
-        run: echo "commitlist<<EOF$(git log --pretty=format:'* %h - %s%n' --no-merges ${{ steps.last_tag.outputs.last_tag }}..HEAD)EOF" >> "$GITHUB_OUTPUT"
+        run: |
+          {
+            echo 'commitlist<<EOF'
+            git log --pretty=format:'* %h - %s%n' --no-merges ${{ steps.last_tag.outputs.last_tag }}..HEAD
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
 
       - name: Update changelog
         run: |
