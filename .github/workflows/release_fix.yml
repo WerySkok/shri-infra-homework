@@ -45,7 +45,7 @@ jobs:
 
       - name: Get last tag
         id: last_tag 
-        run: echo "last_tag=$(git describe --tags --abbrev=0 HEAD^)" >> "$GITHUB_OUTPUT"
+        run: echo "last_tag=$(git describe --tags --abbrev=0 HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Determine fix number
         id: fix_number
